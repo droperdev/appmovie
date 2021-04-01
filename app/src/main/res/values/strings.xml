@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">AppMovie</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="username">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="log_in">Iniciar sesión</string>
+    <string name="logo_description">Logo</string>
 </resources>
