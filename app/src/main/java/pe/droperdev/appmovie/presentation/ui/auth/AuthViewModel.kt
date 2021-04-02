@@ -1,29 +1,50 @@
 package pe.droperdev.appmovie.presentation.ui.auth
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.liveData
+import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pe.droperdev.appmovie.domain.model.UserModel
 import pe.droperdev.appmovie.domain.repository.AuthRepository
 import pe.droperdev.appmovie.presentation.Resource
 
 class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
-    fun login(userName: String, password: String): LiveData<Resource<UserModel?>> {
-        return liveData(Dispatchers.IO) {
-            emit(Resource.Loading())
-            if (userName.isEmpty()) {
-                emit(Resource.Failure("El usuario es obligatorio."))
-                return@liveData
-            }
-            if (password.isEmpty()) {
-                emit(Resource.Failure("La contraseña es obligatorio."))
-                return@liveData
-            }
-            emit(authRepository.login(userName, password))
+    private var _user = MutableLiveData<UserModel?>()
+    val user: LiveData<UserModel?> get() = _user
 
+    private var _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean> get() = _loading
+
+    private var _error = MutableLiveData<String>()
+    val error: LiveData<String> get() = _error
+
+    fun login(userName: String, password: String) {
+        if (userName.isEmpty()) {
+            _error.value = "El usuario es obligatorio."
+            return
+        }
+        if (password.isEmpty()) {
+            _error.value = "La contraseña es obligatorio."
+            return
+        }
+
+        viewModelScope.launch {
+            _loading.value = true
+            val result = withContext(Dispatchers.IO) {
+                authRepository.login(userName, password)
+            }
+            when (result) {
+                is Resource.Success -> {
+                    _loading.value = false
+                    _user.value = result.data
+                }
+                is Resource.Failure -> {
+                    _loading.value = false
+                    _error.value = result.message
+
+                }
+            }
         }
     }
 }

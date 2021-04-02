@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.fragment_login.*
 import pe.droperdev.appmovie.R
 import pe.droperdev.appmovie.data.repository.AuthRepositoryImpl
 import pe.droperdev.appmovie.domain.model.UserModel
-import pe.droperdev.appmovie.presentation.Resource
 import pe.droperdev.appmovie.presentation.ui.main.MainActivity
 
 class LoginFragment : Fragment(R.layout.fragment_login), View.OnClickListener {
@@ -34,10 +33,17 @@ class LoginFragment : Fragment(R.layout.fragment_login), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         eventUI()
+        initObserver()
     }
 
     private fun eventUI() {
         btn_log_in.setOnClickListener(this)
+    }
+
+    private fun initObserver() {
+        authViewModel.user.observe(viewLifecycleOwner, userObserver)
+        authViewModel.loading.observe(viewLifecycleOwner, loadingObserver)
+        authViewModel.error.observe(viewLifecycleOwner, errorObserver)
     }
 
     private fun getUserName(): String {
@@ -52,28 +58,28 @@ class LoginFragment : Fragment(R.layout.fragment_login), View.OnClickListener {
         when (v.id) {
             R.id.btn_log_in -> {
                 authViewModel.login(getUserName(), getPassword())
-                    .observe(viewLifecycleOwner, loginObserver)
             }
         }
     }
 
-    private val loginObserver = Observer<Resource<UserModel?>> {
-        when (it) {
-            is Resource.Loading -> {
-                progress_bar.visibility = VISIBLE
-                btn_log_in.visibility = GONE
-            }
-            is Resource.Success -> {
-                progress_bar.visibility = GONE
-                btn_log_in.visibility = VISIBLE
-                goToMain()
-            }
-            is Resource.Failure -> {
-                progress_bar.visibility = GONE
-                btn_log_in.visibility = VISIBLE
-                Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-            }
+    private val userObserver = Observer<UserModel?> {
+        if (it != null) {
+            goToMain()
         }
+    }
+
+    private val loadingObserver = Observer<Boolean> {
+        if (it) {
+            progress_bar.visibility = VISIBLE
+            btn_log_in.visibility = GONE
+        } else {
+            progress_bar.visibility = GONE
+            btn_log_in.visibility = VISIBLE
+        }
+    }
+
+    private val errorObserver = Observer<String> {
+        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
     }
 
     private fun goToMain() {
