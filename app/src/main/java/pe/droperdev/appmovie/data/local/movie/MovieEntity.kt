@@ -3,6 +3,7 @@ package pe.droperdev.appmovie.data.local.movie
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import pe.droperdev.appmovie.domain.model.MovieModel
 
 @Entity(tableName = "MovieEntity")
 class MovieEntity(
@@ -19,4 +20,12 @@ class MovieEntity(
     @ColumnInfo(name = "releaseDate")
     val releaseDate: String,
 ) {
+    fun toModel() = MovieModel(
+        id = id,
+        backdropPath = backdropPath,
+        originalTitle = originalTitle,
+        overview = overview,
+        posterPath = posterPath,
+        releaseDate = releaseDate
+    )
 }

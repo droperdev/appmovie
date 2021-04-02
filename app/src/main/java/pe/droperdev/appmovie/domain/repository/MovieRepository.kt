@@ -5,5 +5,5 @@ import pe.droperdev.appmovie.domain.model.Pagination
 import pe.droperdev.appmovie.presentation.Resource
 
 interface MovieRepository {
-    suspend fun getMovies(page: Int): Resource<Pagination<List<MovieModel>>>
+    suspend fun getMovies(page: Int, refresh: Boolean): Resource<Pagination<List<MovieModel>>>
 }

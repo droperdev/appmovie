@@ -30,11 +30,12 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
         getMovies()
     }
 
-    fun getMovies(page: Int = 1) {
+    fun getMovies(page: Int = 1, refresh: Boolean = false) {
         viewModelScope.launch {
-            _loading.value = true
+            _loading.value = !refresh
+            if (refresh) data.clear()
             val result = withContext(Dispatchers.IO) {
-                movieRepository.getMovies(page)
+                movieRepository.getMovies(page, refresh)
             }
             when (result) {
                 is Resource.Success -> {

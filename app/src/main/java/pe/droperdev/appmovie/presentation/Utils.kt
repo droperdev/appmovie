@@ -1,30 +1,7 @@
 package pe.droperdev.appmovie.presentation
 
-import android.util.Log
-import retrofit2.HttpException
-import java.net.SocketException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-
 sealed class Resource<out T> {
     class Loading<out T>: Resource<T>()
     data class Success<out T>(val data: T): Resource<T>()
     data class Failure(val message: String): Resource<Nothing>()
-}
-
-fun customException(ex: Exception): Resource.Failure {
-    Log.d("-->", ex.message.toString())
-    return when (ex) {
-        is HttpException -> {
-            when (ex.code()) {
-                400 -> Resource.Failure(ex.toString())
-                else -> Resource.Failure("Ocurrió un error inesperado, vuelve a intentarlo.")
-            }
-        }
-        is SocketTimeoutException -> Resource.Failure("Tiempo de espera superado")
-        is SocketException,
-        is UnknownHostException,
-        -> Resource.Failure("No hay conexión a Internet")
-        else -> Resource.Failure("Ocurrió un error inesperado, vuelve a intentarlo.")
-    }
 }

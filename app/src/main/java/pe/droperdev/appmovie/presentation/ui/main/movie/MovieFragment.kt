@@ -1,7 +1,6 @@
 package pe.droperdev.appmovie.presentation.ui.main.movie
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -14,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_movie.*
 import pe.droperdev.appmovie.R
-import pe.droperdev.appmovie.data.MovieDataSource
+import pe.droperdev.appmovie.data.MovieLocalDataSource
+import pe.droperdev.appmovie.data.MovieRemoteDataSource
+import pe.droperdev.appmovie.data.local.AppDatabase
 import pe.droperdev.appmovie.data.repository.MovieRepositoryImpl
 import pe.droperdev.appmovie.domain.model.MovieModel
 
@@ -23,7 +24,10 @@ class MovieFragment : Fragment(R.layout.fragment_movie) {
 
     private val movieViewModel by viewModels<MovieViewModel> {
         MovieViewModelFactory(
-            MovieRepositoryImpl(MovieDataSource())
+            MovieRepositoryImpl(
+                MovieRemoteDataSource(),
+                MovieLocalDataSource(AppDatabase.getDatabase(requireContext()))
+            )
         )
     }
 
@@ -64,6 +68,11 @@ class MovieFragment : Fragment(R.layout.fragment_movie) {
                 }
             }
         })
+
+        content_movie.setOnRefreshListener {
+            movieViewModel.setPage(1)
+            movieViewModel.getMovies(page = 1, refresh = true)
+        }
     }
 
 
@@ -86,19 +95,17 @@ class MovieFragment : Fragment(R.layout.fragment_movie) {
             rv_movie.visibility = VISIBLE
             movieAdapter?.setData(it)
             isLoading = false
+            content_movie.isRefreshing = false
         }
     }
 
     private val loadingObserver = Observer<Boolean> {
-        if (it) {
-            progress_bar.visibility = VISIBLE
-        } else {
-            progress_bar.visibility = GONE
-        }
+        content_movie.isRefreshing = it
     }
 
     private val errorObserver = Observer<String> {
         isLoading = false
+        content_movie.isRefreshing = false
         Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
     }
 
