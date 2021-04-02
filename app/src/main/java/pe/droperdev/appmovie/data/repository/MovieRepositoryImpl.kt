@@ -1,7 +1,6 @@
 package pe.droperdev.appmovie.data.repository
 
-import pe.droperdev.appmovie.data.MovieLocalDataSource
-import pe.droperdev.appmovie.data.MovieRemoteDataSource
+import pe.droperdev.appmovie.data.MovieDataSource
 import pe.droperdev.appmovie.data.remote.response.toModel
 import pe.droperdev.appmovie.domain.model.MovieModel
 import pe.droperdev.appmovie.domain.model.Pagination
@@ -13,14 +12,17 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 class MovieRepositoryImpl(
-    private val movieRemoteDataSource: MovieRemoteDataSource,
-    private val movieLocalDataSource: MovieLocalDataSource
+    private val movieRemoteDataSource: MovieDataSource.Remote,
+    private val movieLocalDataSource: MovieDataSource.Local
 ) : MovieRepository {
-    override suspend fun getMovies(page: Int, refresh: Boolean): Resource<Pagination<List<MovieModel>>> {
+    override suspend fun getMovies(
+        page: Int,
+        refresh: Boolean
+    ): Resource<Pagination<List<MovieModel>>> {
         val resource: Resource<Pagination<List<MovieModel>>>
         resource = try {
             val response = movieRemoteDataSource.getMovies(page)
-            if(refresh) movieLocalDataSource.removeAll()
+            if (refresh) movieLocalDataSource.removeAll()
             movieLocalDataSource.saveMovies(response.results.map { it.toEntity() })
             Resource.Success((response.toModel()))
         } catch (ex: Exception) {
