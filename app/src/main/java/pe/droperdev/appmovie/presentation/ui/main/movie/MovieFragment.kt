@@ -1,6 +1,7 @@
 package pe.droperdev.appmovie.presentation.ui.main.movie
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -9,13 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_movie.*
 import pe.droperdev.appmovie.R
 import pe.droperdev.appmovie.data.MovieDataSource
 import pe.droperdev.appmovie.data.repository.MovieRepositoryImpl
 import pe.droperdev.appmovie.domain.model.MovieModel
-import pe.droperdev.appmovie.presentation.Resource
+
 
 class MovieFragment : Fragment(R.layout.fragment_movie) {
 
@@ -26,6 +28,8 @@ class MovieFragment : Fragment(R.layout.fragment_movie) {
     }
 
     private var movieAdapter: MovieAdapter? = null
+
+    private var isLoading = false;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +49,28 @@ class MovieFragment : Fragment(R.layout.fragment_movie) {
     }
 
     private fun eventUI() {
+        rv_movie.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager?
+                if (!isLoading) {
+                    val page = movieViewModel.getPage()
+                    val totalPage = movieViewModel.getTotalPage()
+                    if (page <= totalPage && linearLayoutManager?.findLastCompletelyVisibleItemPosition() == (page * 20) - 1) {
+                        movieViewModel.setPage(page + 1)
+                        movieViewModel.getMovies(page + 1)
+                        isLoading = true
+                    }
+                }
+            }
+        })
     }
 
+
     private fun initObserver() {
-        movieViewModel.getMovies(1).observe(viewLifecycleOwner, movieObserver)
+        movieViewModel.movies.observe(viewLifecycleOwner, movieObserver)
+        movieViewModel.loading.observe(viewLifecycleOwner, loadingObserver)
+        movieViewModel.error.observe(viewLifecycleOwner, errorObserver)
     }
 
     private fun setupAdapter() {
@@ -59,25 +81,25 @@ class MovieFragment : Fragment(R.layout.fragment_movie) {
         }
     }
 
-    private val movieObserver = Observer<Resource<List<MovieModel>>> {
-        when (it) {
-            is Resource.Loading -> {
-                progress_bar.visibility = VISIBLE
-                rv_movie.visibility = GONE
-            }
-            is Resource.Success -> {
-                progress_bar.visibility = GONE
-                if (it.data.isNotEmpty()){
-                    rv_movie.visibility = VISIBLE
-                    movieAdapter?.setData(it.data)
-                }else{
-
-                }
-            }
-            is Resource.Failure -> {
-                Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-            }
+    private val movieObserver = Observer<List<MovieModel>> {
+        if (it.isNotEmpty()) {
+            rv_movie.visibility = VISIBLE
+            movieAdapter?.setData(it)
+            isLoading = false
         }
+    }
+
+    private val loadingObserver = Observer<Boolean> {
+        if (it) {
+            progress_bar.visibility = VISIBLE
+        } else {
+            progress_bar.visibility = GONE
+        }
+    }
+
+    private val errorObserver = Observer<String> {
+        isLoading = false
+        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

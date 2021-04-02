@@ -28,6 +28,7 @@ class MovieAdapter(private var movies: List<MovieModel>) : RecyclerView.Adapter<
         movies = data
         notifyDataSetChanged()
     }
+
 }
 
 class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
