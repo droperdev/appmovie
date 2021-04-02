@@ -24,12 +24,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "BASE_URL","\"https://api.themoviedb.org/\"")
+            buildConfigField("String", "BASE_URL_IMAGES","\"https://image.tmdb.org/t/p/w500/\"")
             buildConfigField("String", "API_KEY", "\"6348b99172db6f4bbc787a54eacf0b5b\"")
+            buildConfigField("Boolean", "TEST", "false")
         }
 
         debug {
             buildConfigField("String", "BASE_URL","\"https://api.themoviedb.org/\"")
+            buildConfigField("String", "BASE_URL_IMAGES","\"https://image.tmdb.org/t/p/w500/\"")
             buildConfigField("String", "API_KEY", "\"6348b99172db6f4bbc787a54eacf0b5b\"")
+            buildConfigField("Boolean", "TEST", "true")
         }
     }
     compileOptions {
@@ -64,6 +68,9 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.2.6'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt 'androidx.room:room-compiler:2.2.6'
+
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

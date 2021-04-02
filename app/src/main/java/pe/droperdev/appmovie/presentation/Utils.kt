@@ -1,5 +1,6 @@
 package pe.droperdev.appmovie.presentation
 
+import android.util.Log
 import retrofit2.HttpException
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -12,10 +13,10 @@ sealed class Resource<out T> {
 }
 
 fun customException(ex: Exception): Resource.Failure {
+    Log.d("-->", ex.message.toString())
     return when (ex) {
         is HttpException -> {
             when (ex.code()) {
-                401 -> Resource.Failure("Credenciales invalidas")
                 400 -> Resource.Failure(ex.toString())
                 else -> Resource.Failure("Ocurrió un error inesperado, vuelve a intentarlo.")
             }
