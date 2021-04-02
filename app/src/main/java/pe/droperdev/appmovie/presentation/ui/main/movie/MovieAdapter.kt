@@ -33,9 +33,16 @@ class MovieAdapter(private var movies: List<MovieModel>) : RecyclerView.Adapter<
 
 class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(movieModel: MovieModel) {
-        Glide.with(itemView.context)
-            .load("${BuildConfig.BASE_URL_IMAGES}${movieModel.posterPath}")
-            .into(itemView.iv_photo)
+        if (movieModel.posterPath.isNullOrEmpty()) {
+            Glide.with(itemView.context)
+                .load(R.drawable.ic_play)
+                .into(itemView.iv_photo)
+        } else {
+            Glide.with(itemView.context)
+                .load("${BuildConfig.BASE_URL_IMAGES}${movieModel.posterPath}")
+                .into(itemView.iv_photo)
+        }
+
         itemView.tv_title.text = movieModel.originalTitle
     }
 
