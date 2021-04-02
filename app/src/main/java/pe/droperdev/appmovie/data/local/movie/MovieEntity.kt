@@ -19,6 +19,8 @@ class MovieEntity(
     val posterPath: String?,
     @ColumnInfo(name = "releaseDate")
     val releaseDate: String,
+    @ColumnInfo(name = "voteAverage")
+    val voteAverage: Double
 ) {
     fun toModel() = MovieModel(
         id = id,
@@ -26,6 +28,7 @@ class MovieEntity(
         originalTitle = originalTitle,
         overview = overview,
         posterPath = posterPath,
-        releaseDate = releaseDate
+        releaseDate = releaseDate,
+        voteAverage = voteAverage
     )
 }

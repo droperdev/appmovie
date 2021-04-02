@@ -16,6 +16,8 @@ class MovieResponse(
     val posterPath: String?,
     @SerializedName("release_date")
     val releaseDate: String,
+    @SerializedName("vote_average")
+    val voteAverage: Double,
 ) {
 
     fun toModel() = MovieModel(
@@ -24,7 +26,8 @@ class MovieResponse(
         originalTitle = originalTitle,
         overview = overview,
         posterPath = posterPath,
-        releaseDate = releaseDate
+        releaseDate = releaseDate,
+        voteAverage = voteAverage,
     )
 
     fun toEntity() = MovieEntity(
@@ -33,6 +36,7 @@ class MovieResponse(
         originalTitle = originalTitle,
         overview = overview,
         posterPath = posterPath,
-        releaseDate = releaseDate
+        releaseDate = releaseDate,
+        voteAverage = voteAverage
     )
 }

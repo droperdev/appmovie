@@ -11,5 +11,6 @@ class MovieModel(
     val overview: String,
     val posterPath: String?,
     val releaseDate: String,
+    val voteAverage: Double
 ): Parcelable {
 }

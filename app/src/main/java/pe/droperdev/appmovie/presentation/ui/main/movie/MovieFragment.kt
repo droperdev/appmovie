@@ -2,12 +2,13 @@ package pe.droperdev.appmovie.presentation.ui.main.movie
 
 import android.os.Bundle
 import android.view.View
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +21,7 @@ import pe.droperdev.appmovie.data.repository.MovieRepositoryImpl
 import pe.droperdev.appmovie.domain.model.MovieModel
 
 
-class MovieFragment : Fragment(R.layout.fragment_movie) {
+class MovieFragment : Fragment(R.layout.fragment_movie), OnItemClickListener {
 
     private val movieViewModel by viewModels<MovieViewModel> {
         MovieViewModelFactory(
@@ -83,7 +84,7 @@ class MovieFragment : Fragment(R.layout.fragment_movie) {
     }
 
     private fun setupAdapter() {
-        movieAdapter = MovieAdapter(listOf())
+        movieAdapter = MovieAdapter(listOf(), this)
         rv_movie.apply {
             layoutManager = GridLayoutManager(requireContext(), 3, RecyclerView.VERTICAL, false)
             adapter = movieAdapter
@@ -110,12 +111,12 @@ class MovieFragment : Fragment(R.layout.fragment_movie) {
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MovieFragment().apply {
-                arguments = Bundle().apply {
-
-                }
-            }
+        const val ARG_MOVIE = "movie"
     }
+
+    override fun onItemClick(movie: MovieModel) {
+        val bundle: Bundle = bundleOf(ARG_MOVIE to movie)
+        findNavController().navigate(R.id.movieDetailFragment, bundle)
+    }
+
 }
