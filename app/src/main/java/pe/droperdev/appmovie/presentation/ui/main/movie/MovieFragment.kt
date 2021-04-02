@@ -61,8 +61,8 @@ class MovieFragment : Fragment(R.layout.fragment_movie), OnItemClickListener {
                 super.onScrolled(recyclerView, dx, dy)
                 val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager?
                 if (!isLoading) {
-                    val page = movieViewModel.getPage()
-                    val totalPage = movieViewModel.getTotalPage()
+                    val page = movieViewModel.getPage() ?: 0
+                    val totalPage = movieViewModel.getTotalPage() ?: 0
                     if (page <= totalPage && linearLayoutManager?.findLastCompletelyVisibleItemPosition() == (page * 20) - 1) {
                         movieViewModel.setPage(page + 1)
                         movieViewModel.getMovies(page + 1)

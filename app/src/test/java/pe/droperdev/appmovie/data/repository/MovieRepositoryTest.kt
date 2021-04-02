@@ -27,7 +27,7 @@ class MovieRepositoryTest {
     @Before
     fun setup() {
         movieRemoteDataSource = FakeMovieRemoteDataSource()
-        movieLocalDataSource = FakeMovieLocalDataSource()
+        movieLocalDataSource = FakeMovieLocalDataSource(mutableListOf())
         movieRepository = MovieRepositoryImpl(movieRemoteDataSource, movieLocalDataSource)
     }
 

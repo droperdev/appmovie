@@ -58,16 +58,16 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
         _totalPages.value = total
     }
 
-    fun getTotalPage(): Int {
-        return _totalPages.value ?: 0
+    fun getTotalPage(): Int? {
+        return _totalPages.value
     }
 
     fun setPage(page: Int) {
         _page.value = page
     }
 
-    fun getPage(): Int {
-        return _page.value ?: 0
+    fun getPage(): Int? {
+        return _page.value
     }
 }
 
