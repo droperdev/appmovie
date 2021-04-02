@@ -1,6 +1,7 @@
 package pe.droperdev.appmovie.presentation.ui.main.movieDetail
 
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -15,10 +16,12 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
 
     private var movie: MovieModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        sharedElementEnterTransition = TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
         super.onCreate(savedInstanceState)
         arguments?.let {
             movie = it.getParcelable(ARG_MOVIE)
         }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -28,6 +31,8 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
     }
 
     private fun initUI() {
+        iv_photo_poster.transitionName = movie?.id.toString()
+        tv_title.transitionName = movie?.originalTitle.toString()
         movie?.let { setMovie(it) }
 
     }

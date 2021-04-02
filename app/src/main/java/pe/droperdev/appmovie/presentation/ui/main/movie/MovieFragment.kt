@@ -8,11 +8,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_movie.*
+import kotlinx.android.synthetic.main.item_movie.view.*
 import pe.droperdev.appmovie.R
 import pe.droperdev.appmovie.data.MovieLocalDataSource
 import pe.droperdev.appmovie.data.MovieRemoteDataSource
@@ -114,9 +116,14 @@ class MovieFragment : Fragment(R.layout.fragment_movie), OnItemClickListener {
         const val ARG_MOVIE = "movie"
     }
 
-    override fun onItemClick(movie: MovieModel) {
+    override fun onItemClick(movie: MovieModel, itemView: View) {
+        val extras = FragmentNavigatorExtras(
+            itemView.iv_photo to movie.id.toString(),
+            itemView.tv_title to movie.originalTitle
+        )
+
         val bundle: Bundle = bundleOf(ARG_MOVIE to movie)
-        findNavController().navigate(R.id.movieDetailFragment, bundle)
+        findNavController().navigate(R.id.movieDetailFragment, bundle, null, extras)
     }
 
 }

@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "pe.droperdev.appmovie"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -24,14 +24,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "BASE_URL","\"https://api.themoviedb.org/\"")
-            buildConfigField("String", "BASE_URL_IMAGES","\"https://image.tmdb.org/t/p/w500/\"")
+            buildConfigField("String", "BASE_URL_IMAGES","\"https://image.tmdb.org/t/p/w500\"")
             buildConfigField("String", "API_KEY", "\"6348b99172db6f4bbc787a54eacf0b5b\"")
             buildConfigField("Boolean", "TEST", "false")
         }
 
         debug {
             buildConfigField("String", "BASE_URL","\"https://api.themoviedb.org/\"")
-            buildConfigField("String", "BASE_URL_IMAGES","\"https://image.tmdb.org/t/p/w500/\"")
+            buildConfigField("String", "BASE_URL_IMAGES","\"https://image.tmdb.org/t/p/w500\"")
             buildConfigField("String", "API_KEY", "\"6348b99172db6f4bbc787a54eacf0b5b\"")
             buildConfigField("Boolean", "TEST", "true")
         }

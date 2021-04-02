@@ -35,7 +35,7 @@ class MovieAdapter(
 }
 
 interface OnItemClickListener {
-    fun onItemClick(movie: MovieModel)
+    fun onItemClick(movie: MovieModel, itemView: View)
 }
 
 class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -50,10 +50,12 @@ class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 .into(itemView.iv_photo)
         }
 
+        itemView.iv_photo.transitionName = movieModel.id.toString()
         itemView.tv_title.text = movieModel.originalTitle
+        itemView.tv_title.transitionName = movieModel.originalTitle
 
         itemView.setOnClickListener {
-            listener.onItemClick(movieModel)
+            listener.onItemClick(movieModel, itemView)
         }
     }
 
